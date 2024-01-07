@@ -22,7 +22,7 @@ const Nav = ({ stores, user }: any) => {
       ) : (
         <div className="border-b border-b-gray-200">
           <div className="flex justify-between items-center px-6">
-            <div className="flex h-20 items-center ">
+            <div className="flex h-24 items-center ">
               {/* <StoreSwitcher items={stores} /> */}
               <MainNav />
             </div>

@@ -1,5 +1,7 @@
 export interface IProfilePayload {
   user?: {};
+  userId?: string;
+  picture?: string;
   id?: string;
   firstName?: string;
   lastName?: string;

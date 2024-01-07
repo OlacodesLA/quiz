@@ -1,6 +1,12 @@
 "use client";
 import { usePathname } from "next/navigation";
-import { BookText, User, Home as HomeIcon, Banknote } from "lucide-react";
+import {
+  BookText,
+  User,
+  Home as HomeIcon,
+  Banknote,
+  PenLine,
+} from "lucide-react";
 import Link from "next/link";
 
 export const SidebarContent = () => {
@@ -57,12 +63,12 @@ export const Links = [
   {
     name: "Exam",
     href: "/exam",
-    activeIcon: <BookText className={activeIconClass} />,
-    icon: <BookText className={iconClass} />,
+    activeIcon: <PenLine className={activeIconClass} />,
+    icon: <PenLine className={iconClass} />,
   },
   {
-    name: "Study Pack",
-    href: "/study-pack",
+    name: "Courses",
+    href: "/courses",
     activeIcon: <BookText className={activeIconClass} />,
     icon: <BookText className={iconClass} />,
   },
@@ -77,5 +83,6 @@ export const Links = [
     href: "/profile",
     activeIcon: <User className={activeIconClass} />,
     icon: <User className={iconClass} />,
+    description: "Customize your profile for a personalized experience.",
   },
 ];

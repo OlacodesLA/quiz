@@ -4,13 +4,14 @@ import {
   GoogleAuthProvider,
   confirmPasswordReset,
   createUserWithEmailAndPassword,
+  getAuth,
   sendPasswordResetEmail,
   signInWithEmailAndPassword,
   signInWithPopup,
   signOut,
 } from "firebase/auth";
 import { auth } from "@/config/firebase";
-import { setDoc, doc } from "firebase/firestore";
+import { setDoc, doc, getDoc } from "firebase/firestore";
 import {
   IForgotValues,
   ILoginValues,
@@ -129,6 +130,7 @@ export const logoutUser = async (router: AppRouterInstance) => {
 };
 
 export const loginWithGoogle = async (router: AppRouterInstance) => {
+  const auth = getAuth();
   const provider = new GoogleAuthProvider();
 
   try {
@@ -137,16 +139,26 @@ export const loginWithGoogle = async (router: AppRouterInstance) => {
     if (cred.user) {
       await postToken(cred.user);
       console.log("LOGIN", cred.user);
-      const userDoc = doc(usersCollectionRef, cred.user.uid);
-      // Set the user
-      const [firstName, lastName] = cred.user.displayName.split(" ");
-      await setDoc(userDoc, {
-        email: cred.user.email,
-        firstName,
-        lastName,
-        userId: cred.user.uid,
-        picture: cred.user.photoURL,
-      });
+
+      const userDocRef = doc(usersCollectionRef, cred.user.uid);
+      const userDocSnapshot = await getDoc(userDocRef);
+
+      if (!userDocSnapshot.exists()) {
+        // If the user document doesn't exist, it's the first time logging in
+        const [firstName, lastName] = cred.user.displayName.split(" ");
+        await setDoc(userDocRef, {
+          email: cred.user.email,
+          firstName,
+          lastName,
+          userId: cred.user.uid,
+          picture: cred.user.photoURL,
+        });
+
+        console.log("First time login");
+      } else {
+        console.log("Returning user");
+      }
+
       toast.success("Successfully Logged In");
     }
 

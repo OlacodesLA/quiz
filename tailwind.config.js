@@ -21,6 +21,12 @@ module.exports = {
         fredoka: ["Fredoka", "sans-serif"],
       },
       colors: {
+        1: "#D53FD1",
+        2: "#39B4CF",
+        3: "#EFA12F",
+        4: "#8520D3",
+        5: "#CC2424",
+        6: "#CC2424",
         border: "hsl(var(--border))",
         input: "hsl(var(--input))",
         ring: "hsl(var(--ring))",

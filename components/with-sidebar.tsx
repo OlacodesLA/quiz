@@ -43,13 +43,13 @@ const WithDesktopSidebar = ({
 }) => {
   return (
     // style used from here -> https://github.com/shadcn-ui/ui/blob/1cf5fad881b1da8f96923b7ad81d22d0aa3574b9/apps/www/app/docs/layout.tsx#L12
-    <div className="mx-auto h-screen flex-1 items-start md:grid md:grid-cols-[220px_minmax(0,1fr)]  lg:grid-cols-[240px_minmax(0,1fr)] ">
-      <aside className="fixed bg-gray-950 text-gray-200 top-14 z-30  hidden h-screen w-full shrink-0 border-r md:sticky md:block">
-        <div className="flex flex-col items-start font-fredoka font-light justify-between h-full w-full ">
+    <div className="mx-auto h-[3000px] flex-1 items-start md:grid md:grid-cols-[220px_minmax(0,1fr)]  lg:grid-cols-[240px_minmax(0,1fr)] ">
+      <div className="fixed bg-gray-950 text-gray-200 top-0 z-30  hidden h-screen w-full shrink-0 border-r md:sticky md:block">
+        <div className="flex flex-col items-start font-fredoka font-light justify-between h-screen w-full ">
           <SidebarContent />
           <Logout />
         </div>
-      </aside>
+      </div>
       {children}
     </div>
   );

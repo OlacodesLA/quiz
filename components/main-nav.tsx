@@ -4,28 +4,31 @@ import { cn } from "@/lib/utils";
 import Link from "next/link";
 import { useParams, usePathname } from "next/navigation";
 import { Links } from "./navigation/sidebar";
+import { Heading } from "./ui/heading";
 
-export function MainNav({
-  className,
-  ...props
-}: React.HTMLAttributes<HTMLElement>) {
+export const MainNav = () => {
   const pathname = usePathname();
 
   const name = Links.find((item) => pathname === item.href) || {
     href: "Error",
     name: "Error",
+    description: "Error",
   };
   return (
-    <nav className={cn("flex items-center space-x-4 lg:space-x-6", className)}>
+    <nav
+      className={cn("flex  items-center space-x-4 lg:space-x-6 md:px-0 px-6")}
+    >
       <Link
         key={name.href}
         href={name.href}
-        className={cn(
-          "text-3xl font-bold transition-colors hover:text-primary"
-        )}
+        className={cn(" transition-colors hover:text-primary")}
       >
-        {pathname === name.href && <>{name.name}</>}
+        <Heading
+          title={(pathname === name.href && name.name) || ""}
+          description={name.description || ""}
+          className="font-fredoka font-semibold"
+        />
       </Link>
     </nav>
   );
-}
+};

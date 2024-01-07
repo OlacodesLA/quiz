@@ -1,7 +1,7 @@
 "use client";
 import Link from "next/link";
 import React from "react";
-import { Home, User, BookText } from "lucide-react";
+import { Home, User, BookText, Banknote, PenLine } from "lucide-react";
 
 import { usePathname } from "next/navigation";
 
@@ -49,14 +49,20 @@ export const Links = [
   {
     name: "exam",
     href: "/exam",
+    activeIcon: <PenLine className={activeIconClass} />,
+    icon: <PenLine className={iconClass} />,
+  },
+  {
+    name: "Courses",
+    href: "/courses",
     activeIcon: <BookText className={activeIconClass} />,
     icon: <BookText className={iconClass} />,
   },
   {
-    name: "Pack",
-    href: "/pack",
-    activeIcon: <BookText className={activeIconClass} />,
-    icon: <BookText className={iconClass} />,
+    name: "Payment",
+    href: "/payment",
+    activeIcon: <Banknote className={activeIconClass} />,
+    icon: <Banknote className={iconClass} />,
   },
   {
     name: "Profile",
