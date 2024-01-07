@@ -9,9 +9,7 @@ type Props = {
 export default async function AuthLayout({ children }: Props) {
   const user = await getUser();
 
-  if (!user) {
-    redirect("/auth/login");
-  } else {
+  if (user) {
     redirect("/");
   }
 
