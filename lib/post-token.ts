@@ -20,6 +20,8 @@ export default async function postToken(user: any) {
     //logging out of client side auth is very important as if you didnt you could just log back into the server
     // await signOut(clientAuth);
     // location.reload();
-    window.location.assign("/");
+    setTimeout(() => {
+      window.location.assign("/");
+    }, 1000);
   }
 }

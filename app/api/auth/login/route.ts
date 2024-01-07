@@ -28,12 +28,12 @@ export async function POST(req: NextRequest) {
       }
     }
 
-    NextResponse.redirect(new URL("/", req.url));
-    NextResponse.redirect(new URL("/", req.url));
+    // NextResponse.redirect(new URL("/", req.url));
+    // NextResponse.redirect(new URL("/", req.url));
 
     return new NextResponse("User authenticated", {
       status: 200,
-      headers: { "content-type": "application/json", Location: "/" },
+      // headers: { "content-type": "application/json", Location: "/" },
     });
   } catch (error) {
     console.error("[LOGIN]", error);
