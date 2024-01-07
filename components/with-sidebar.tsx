@@ -23,8 +23,11 @@ export const WithMobileSidebar = ({
             <MenuIcon size={24} className="mr-2" />
           </SheetTrigger>
         </div>
-        <SheetContent className="bg-black" side="left">
-          <SidebarContent />
+        <SheetContent className="bg-black " side="left">
+          <div className="flex flex-col h-full justify-between text-white">
+            <SidebarContent />
+            <Logout />
+          </div>
         </SheetContent>
       </Sheet>
       {children}

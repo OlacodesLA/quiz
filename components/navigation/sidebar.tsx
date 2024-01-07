@@ -8,6 +8,7 @@ import {
   PenLine,
 } from "lucide-react";
 import Link from "next/link";
+import Logout from "../logout";
 
 export const SidebarContent = () => {
   const pathname = usePathname();

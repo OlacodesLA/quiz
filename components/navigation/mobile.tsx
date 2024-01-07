@@ -4,6 +4,7 @@ import React from "react";
 import { Home, User, BookText, Banknote, PenLine } from "lucide-react";
 
 import { usePathname } from "next/navigation";
+import Logout from "../logout";
 
 type Props = {};
 
