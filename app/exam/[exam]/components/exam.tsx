@@ -1,5 +1,5 @@
 "use client";
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { ECarousel } from "./carousel";
 import List from "./list";
 import { CarouselApi } from "@/components/ui/carousel";
@@ -7,19 +7,89 @@ import ExamHeading from "./heading";
 import DrawerList from "./drawerList";
 import { Button } from "@/components/ui/button";
 import { questionsCollectionRef } from "@/utils/users";
-import { setDoc, doc } from "firebase/firestore";
+import { db } from "@/config/firebase";
+import { doc, getDoc, setDoc, onSnapshot } from "firebase/firestore";
 
 type Props = {
   questions: any;
   code: string;
   userId: string;
+  name: string;
 };
 
-const Exam = ({ questions, code, userId }: Props) => {
+const Exam = ({ questions, code, userId, name }: Props) => {
   const [api, setApi] = React.useState<CarouselApi>();
   const [current, setCurrent] = React.useState(0);
   const [count, setCount] = React.useState(0);
   const [selectedAnswers, setSelectedAnswers] = React.useState(questions);
+  const [endTime, setEndTime] = useState<number | null>(null);
+  const [showModal, setShowModal] = useState<boolean>(false);
+  const [endModal, setEndModal] = useState<boolean>(false);
+  const [fetched, setFetched] = useState<boolean>(false);
+
+  const examDocRef = doc(db, "users", userId, "exams", code);
+
+  const remainingTime = endTime ? Math.max(0, endTime - Date.now() / 1000) : 0;
+
+  const fetchEndTime = async () => {
+    try {
+      const docSnapshot = await getDoc(examDocRef);
+      const endTimestamp = docSnapshot.exists()
+        ? docSnapshot.data()?.endTime
+        : null;
+      setEndTime(endTimestamp);
+      setFetched(true);
+    } catch (error) {
+      console.error("Error fetching data:", error);
+    }
+  };
+
+  useEffect(() => {
+    fetchEndTime();
+
+    const unsubscribe = onSnapshot(examDocRef, (docSnapshot) => {
+      const endTimestamp = docSnapshot.exists()
+        ? docSnapshot.data()?.endTime
+        : null;
+      setEndTime(endTimestamp);
+
+      // If the document doesn't exist, show the modal
+      if (!docSnapshot.exists()) {
+        setShowModal(true);
+      }
+      if (docSnapshot.exists() && remainingTime === 0 && endTime) {
+        setEndModal(true);
+      }
+    });
+
+    return () => {
+      unsubscribe();
+    };
+  }, [examDocRef]);
+
+  const startExam = async () => {
+    try {
+      const docSnapshot = await getDoc(examDocRef);
+
+      if (docSnapshot.exists()) {
+        // Document already exists, fetch the existing end time
+        const existingEndTime = docSnapshot.data()?.endTime;
+        setEndTime(existingEndTime);
+      } else {
+        // Document doesn't exist, set a new end time
+        const examDuration = 360; // 30 minutes in seconds
+        const endTimestamp = Math.floor(Date.now() / 1000) + examDuration;
+
+        await setDoc(examDocRef, { endTime: endTimestamp });
+        setEndTime(endTimestamp);
+      }
+
+      // Close the modal after starting the exam
+      setShowModal(false);
+    } catch (error) {
+      console.error("Error starting exam:", error);
+    }
+  };
 
   useEffect(() => {
     if (!api) {
@@ -39,7 +109,10 @@ const Exam = ({ questions, code, userId }: Props) => {
   const updateData = async (data: any) => {
     try {
       const questionDoc = doc(questionsCollectionRef, "F1-002");
-      await setDoc(questionDoc, { questions: data });
+      await setDoc(questionDoc, {
+        questions: data,
+        name: "Office Organisation",
+      });
     } catch (error) {
       console.log(error);
     }
@@ -47,29 +120,46 @@ const Exam = ({ questions, code, userId }: Props) => {
 
   return (
     <div>
-      <ExamHeading code={code} userId={userId} />
-      <div className="flex justify-between items-start w-full px-4 md:px-6 gap-10">
-        <ECarousel
-          setSelectedAnswers={setSelectedAnswers}
-          questions={questions}
-          setApi={setApi}
-        />
-        <List
-          selectedAnswers={selectedAnswers}
-          questions={questions}
-          current={current}
-          api={api}
-        />
-      </div>
-      <div className="">
-        <DrawerList questions={questions} current={current} api={api} />
-      </div>
-      <Button
-        type="button"
-        onClick={() => updateData(officeOrganisationQuestions)}
-      >
-        Update Data
-      </Button>
+      <ExamHeading
+        code={code}
+        userId={userId}
+        name={name}
+        selectedAnswers={selectedAnswers}
+        showModal={showModal}
+        endModal={endModal}
+        startExam={startExam}
+        setEndModal={setEndModal}
+        endTime={endTime}
+      />
+
+      {fetched && (
+        <>
+          <div className="flex justify-between items-start w-full px-4 md:px-6 gap-10">
+            <ECarousel
+              setSelectedAnswers={setSelectedAnswers}
+              questions={questions}
+              setApi={setApi}
+            />
+            <List
+              selectedAnswers={selectedAnswers}
+              questions={questions}
+              current={current}
+              api={api}
+            />
+          </div>
+          <div className="">
+            <DrawerList questions={questions} current={current} api={api} />
+          </div>
+          <Button
+            type="button"
+            onClick={() => updateData(officeOrganisationQuestions)}
+          >
+            Update Data
+          </Button>
+        </>
+      )}
+
+      {!fetched && <div className="text-center">Loading</div>}
     </div>
   );
 };
@@ -77,6 +167,7 @@ const Exam = ({ questions, code, userId }: Props) => {
 export default Exam;
 
 // questionData.js
+
 export const officeOrganisationQuestions = [
   {
     id: 1,

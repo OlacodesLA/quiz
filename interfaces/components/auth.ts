@@ -1,6 +1,7 @@
 export interface IRegistrationValues {
   firstName: string;
   lastName: string;
+  qualification: string;
   email: string;
   password: string;
   password2: string;

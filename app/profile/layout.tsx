@@ -28,7 +28,7 @@ export default async function SetupLayout({
     ...doc.data(),
   }));
 
-  console.log("testing", testing);
+  // console.log("testing", testing);
 
   if (querySnapshot && testing[0]?.id) {
     redirect(`/${testing[0].id}`);

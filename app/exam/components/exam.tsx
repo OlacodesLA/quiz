@@ -28,10 +28,12 @@ type CategorizedCourses = {
   completedLevels: CoursesObject;
 };
 
-type Props = {};
+type Props = {
+  user: any;
+};
 
-const Exam: React.FC<Props> = () => {
-  const currentLevel = "Foundation I";
+const Exam: React.FC<Props> = ({ user }) => {
+  const currentLevel = user?.level;
 
   const categorizedCourses: CategorizedCourses = {
     currentLevel: {},

@@ -89,7 +89,7 @@ export function ECarousel({ setSelectedAnswers, questions, setApi }: any) {
                         >
                           <RadioGroupItem
                             value={option}
-                            id={option}
+                            id={option + index}
                             className={`${
                               selectedValues[question.id] === option
                                 ? "bg-gray-100 text-gray-900"
@@ -102,7 +102,7 @@ export function ECarousel({ setSelectedAnswers, questions, setApi }: any) {
                                 ? "text-gray-100 w-full"
                                 : ""
                             }`}
-                            htmlFor={option}
+                            htmlFor={option + index}
                           >
                             {option}
                           </Label>

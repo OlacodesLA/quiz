@@ -3,7 +3,7 @@ import Image from "next/image";
 
 type Props = {};
 
-const ImageInfo = ({ firstName, lastName, picture }: any) => {
+const ImageInfo = ({ firstName, lastName, picture, level }: any) => {
   return (
     <div className="bg-white h-40 rounded-xl">
       <div className="bg-gradient-to-r from-gray-950 to-black h-24 w-full rounded-t-xl" />
@@ -11,7 +11,7 @@ const ImageInfo = ({ firstName, lastName, picture }: any) => {
         <div className="w-28 h-28 border-4 border-white rounded-full flex -translate-y-14">
           <AspectRatio ratio={1 / 1} className="bg-muted rounded-full">
             <Image
-              src={picture || ""}
+              src={picture || "/avatar.png"}
               alt={firstName + " " + lastName + "`s profile picture"}
               fill
               className="rounded-full object-cover"
@@ -22,7 +22,7 @@ const ImageInfo = ({ firstName, lastName, picture }: any) => {
           <p className="text-gray-900 text-lg font-bold">
             {firstName} {lastName}
           </p>
-          <p className="text-sm  text-gray-700">Student</p>
+          <p className="text-sm  text-gray-700">{level}</p>
         </div>
       </div>
     </div>

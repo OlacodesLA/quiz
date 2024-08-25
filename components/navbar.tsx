@@ -18,9 +18,9 @@ const Navbar = async () => {
 
   const me = await getUserById(user.uid);
 
-  console.log("Me", me);
+  // console.log("Me", me);
 
-  return <Nav stores={stores} user={user} />;
+  return <Nav stores={stores} user={me} />;
 };
 
 export default Navbar;

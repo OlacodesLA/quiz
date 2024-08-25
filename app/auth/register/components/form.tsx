@@ -9,6 +9,22 @@ import { registerSchema } from "@/schemas";
 import { motion } from "framer-motion";
 import StaggerChildren, { childVariants } from "@/animations/staggerChildren";
 import { registerUser } from "@/services";
+import {
+  FormField,
+  FormItem,
+  FormLabel,
+  FormControl,
+  FormMessage,
+} from "@/components/ui/form";
+import form from "../../forgot-password/components/form";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import SelectField from "@/components/input/select";
 
 type Props = {};
 
@@ -27,6 +43,7 @@ const RegisterForm = (props: Props) => {
         firstName: "",
         lastName: "",
         email: "",
+        qualification: "",
         password: "",
         password2: "",
       },
@@ -73,6 +90,19 @@ const RegisterForm = (props: Props) => {
             touched={touched.email}
           />
         </motion.div>
+        <motion.div variants={childVariants} className="">
+          <SelectField
+            options={qualifications}
+            placeholder="Last Qualification"
+            name="qualification"
+            handleChange={handleChange}
+            handleBlur={handleBlur}
+            value={values.qualification}
+            error={errors.qualification}
+            touched={touched.qualification}
+          />
+        </motion.div>
+
         <motion.div variants={childVariants} className="flex gap-2 items-start">
           <PasswordField
             name="password"
@@ -106,3 +136,26 @@ const RegisterForm = (props: Props) => {
 };
 
 export default RegisterForm;
+
+const qualifications = [
+  {
+    name: "WAEC/NECO/GCE/NABTEB",
+    value: "Foundation I",
+  },
+  {
+    name: "OND/NCE",
+    value: "Foundation II",
+  },
+  {
+    name: "HND",
+    value: "Intermediate I",
+  },
+  {
+    name: "B.SC/PGD",
+    value: "Intermediate II",
+  },
+  {
+    name: "M.SC/MBA",
+    value: "Final I",
+  },
+];

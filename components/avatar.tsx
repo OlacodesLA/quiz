@@ -66,12 +66,16 @@ const AvatarComp = ({ user }: any) => {
     <div className="flex gap-4 items-start">
       <div className="flex flex-col">
         <p className="text-base font-bold text-gray-900">{name}</p>
-        <p className="text-sm  text-gray-700">Student</p>
+        <p className="text-sm  text-gray-700">{user?.level}</p>
       </div>
       <DropdownMenu>
         <DropdownMenuTrigger asChild>
           <Avatar>
-            <AvatarImage src={user?.picture} />
+            {user?.picture ? (
+              <AvatarImage src={user?.picture} />
+            ) : (
+              <AvatarImage src="/avatar.png" />
+            )}
             <AvatarFallback>{initial}</AvatarFallback>
           </Avatar>
         </DropdownMenuTrigger>

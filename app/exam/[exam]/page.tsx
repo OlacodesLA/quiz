@@ -29,6 +29,7 @@ export default async function Exams({ params }: { params: { exam: string } }) {
         {/* <Banner /> */}
         <Exam
           questions={questions?.questions}
+          name={questions?.name}
           userId={uid}
           code={params.exam}
         />

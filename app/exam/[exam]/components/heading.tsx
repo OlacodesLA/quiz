@@ -1,68 +1,43 @@
-"use client";
 import React, { useEffect, useState } from "react";
 import { CountdownCircleTimer } from "react-countdown-circle-timer";
-import { ref, get, set, onValue } from "firebase/database";
-import { database } from "@/config/firebase";
+import { doc, getDoc, setDoc, onSnapshot } from "firebase/firestore";
+import { db } from "@/config/firebase";
+import { Heading } from "@/components/ui/heading";
 import { Button } from "@/components/ui/button";
+import { StartModal } from "./start";
+import { EndModal } from "./end"; // Import your modal component
+import { useRouter } from "next/navigation";
 
 type Props = {
   code: string;
   userId: string;
+  name: string;
+  selectedAnswers: any;
+  showModal: boolean;
+  endModal: boolean;
+  startExam: any;
+  setEndModal: any;
+  endTime: any;
 };
 
-const ExamHeading = ({ code, userId }: Props) => {
-  console.log(userId);
-
-  const endTimeRef = ref(database, `/${userId}/${code}/endTime`);
-
-  const [endTime, setEndTime] = useState<number | null>(null);
-
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const snapshot = await get(endTimeRef);
-        const endTimestamp = snapshot.val();
-        setEndTime(endTimestamp);
-      } catch (error) {
-        console.error("Error fetching data:", error);
-      }
-    };
-
-    fetchData();
-
-    // Set up a listener to keep the end time updated in real-time
-    const listener = onValue(endTimeRef, (snapshot) => {
-      const endTimestamp = snapshot.val();
-      setEndTime(endTimestamp);
-    });
-
-    // Clean up listener on component unmount
-    return () => {
-      // Unsubscribe from real-time updates
-      listener();
-    };
-  }, [endTimeRef]);
-
-  const startExam = () => {
-    // Replace 1800 with the duration of your exam in seconds (30 minutes in this case)
-    const examDuration = 1800;
-    const endTimestamp = Math.floor(Date.now() / 1000) + examDuration;
-
-    // Set the end time in Firebase Realtime Database
-    set(endTimeRef, endTimestamp);
-  };
-
-  // useEffect(() => {
-  //   setTimeout(() => {
-  //     startExam();
-  //   }, 500);
-  // }, []);
+const ExamHeading = ({
+  code,
+  userId,
+  name,
+  selectedAnswers,
+  showModal,
+  endModal,
+  startExam,
+  setEndModal,
+  endTime,
+}: Props) => {
+  const router = useRouter();
+  const remainingTime = endTime ? Math.max(0, endTime - Date.now() / 1000) : 0;
 
   const onTimeout = () => {
     // Handle timeout logic if needed
+    setEndModal(true);
   };
-
-  const remainingTime = endTime ? Math.max(0, endTime - Date.now() / 1000) : 0;
 
   const children = ({ remainingTime }: any) => {
     const minutes = Math.floor(remainingTime / 60);
@@ -75,13 +50,15 @@ const ExamHeading = ({ code, userId }: Props) => {
     <div className="px-6 py-2 flex items-center justify-between">
       <div className="">
         <div className="text-2xl font-semibold font-fredoka">
-          Course: Fundraising Management
+          Course: {name}
         </div>
         <div className="text-gray-700 text-sm">
           You have 30 minutes to finish this section
         </div>
       </div>
-
+      <StartModal show={showModal} onClick={startExam} />{" "}
+      <EndModal show={endModal} onClick={() => router.push("/exam")} />{" "}
+      {/* Pass the show prop to control modal visibility */}
       <div className="h-24">
         <CountdownCircleTimer
           isPlaying
@@ -90,6 +67,7 @@ const ExamHeading = ({ code, userId }: Props) => {
           strokeWidth={7}
           colors={["#1E293B", "#F7B801", "#A30000", "#A30000"]}
           colorsTime={[7, 5, 2, 0]}
+          onComplete={onTimeout}
         >
           {children}
         </CountdownCircleTimer>

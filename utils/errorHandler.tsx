@@ -31,6 +31,9 @@ export const getFirebaseErrorMessage = (code: string) => {
     case "auth/network-request-failed":
       message = ERROR_MESSAGES.NETWORK_ERROR;
       break;
+    case "auth/invalid-credential":
+      message = ERROR_MESSAGES.INVALID_CREDENTIAL;
+      break;
     default:
       message = ERROR_MESSAGES.DEFAULT_MESSAGE;
       break;

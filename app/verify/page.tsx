@@ -1,36 +1,30 @@
-//@ts-nocheck
 import { WithSidebar } from "@/components/with-sidebar";
 import Navbar from "@/components/navbar";
 import { SidebarContent, CustomHeader } from "@/components/navigation/sidebar";
 import Banner from "@/components/banner";
-import { MainNav } from "@/components/main-nav";
-import Exam from "./components/exam";
+// import InitiatePayment from "./components/page";
 import getUser from "@/lib/get-user";
-import { getUserById } from "@/services/profileServices";
 import { redirect } from "next/navigation";
+import { getUserById } from "@/services/profileServices";
+import VerifyPayment from "./verify";
 
-export default async function Exams() {
-  // const { userId } = useAuth();
-
-  // console.log(userId);
+export default async function Home() {
   const user = await getUser();
 
   if (!user) {
     redirect("/auth/login");
   }
-
   const me = await getUserById(user.uid);
-  console.log("me", me);
 
+  // console.log("Real_User", user);
   return (
     <WithSidebar
       sidebarContent={SidebarContent}
-      mobileDashboardHeader={MainNav}
+      mobileDashboardHeader={CustomHeader}
     >
       <div className="">
         <Navbar />
-        <Banner />
-        <Exam user={me} />
+        <VerifyPayment me={me} />
       </div>
     </WithSidebar>
   );

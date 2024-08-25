@@ -12,10 +12,15 @@ type Props = {
 
 const ProfileUI = ({ user }: Props) => {
   console.log("Usser", user);
-  const { firstName, lastName, picture } = user;
+  const { firstName, lastName, picture, level } = user;
   return (
     <div className="mx-6 mt-6 ">
-      <ImageInfo firstName={firstName} lastName={lastName} picture={picture} />
+      <ImageInfo
+        firstName={firstName}
+        lastName={lastName}
+        picture={picture}
+        level={level}
+      />
       <PersonalInfo {...user} user={user} />
       <EducationalInfo {...user} user={user} />
       <ProfessionalInfo {...user} user={user} />

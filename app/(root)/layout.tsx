@@ -1,3 +1,4 @@
+//@ts-nocheck
 import { db } from "@/config/firebase";
 import checkAuth from "@/hooks/checkAuth";
 import useAuth from "@/hooks/useAuth";
@@ -20,7 +21,7 @@ export default async function SetupLayout({
   }
 
   const querySnapshot = await getDocs(
-    query(collection(db, "store"), where("userId", "==", user.uid))
+    query(collection(db, "store"), where("userId", "==", user?.uid))
   );
 
   const testing = querySnapshot.docs.map((doc) => ({

@@ -3,8 +3,12 @@ import Navbar from "@/components/navbar";
 import { SidebarContent, CustomHeader } from "@/components/navigation/sidebar";
 import { MainNav } from "@/components/main-nav";
 import Banner from "@/components/banner";
+import OverviewCard from "@/components/overview";
+import getUser from "@/lib/get-user";
+import { getUserById } from "@/services/profileServices";
+import { redirect } from "next/navigation";
 
-export default function Home() {
+export default async function Home() {
   return (
     <WithSidebar
       sidebarContent={SidebarContent}
@@ -13,6 +17,7 @@ export default function Home() {
       <div className="">
         <Navbar />
         <Banner />
+        <OverviewCard />
       </div>
     </WithSidebar>
   );

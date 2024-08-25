@@ -36,6 +36,27 @@ export const getUserById = async (userId: string) => {
   }
 };
 
+export const getPaymentById = async (userId: string, level: string) => {
+  try {
+    const paymentDocRef = doc(db, "users", userId, "payments", level);
+    console.log("payment", paymentDocRef);
+    const userDocSnapshot = await getDoc(paymentDocRef);
+
+    if (!userDocSnapshot.exists()) {
+      return null;
+    }
+
+    const userData = userDocSnapshot.data();
+
+    return userData;
+  } catch (error: any) {
+    console.error("Error retrieving user:", { message: error.message }, error);
+    const newError = getFirebaseErrorMessage(error.message);
+    // toast.error(newError);
+    throw error;
+  }
+};
+
 // export const getFirstDocument = async (
 //   collectionName: string,
 //   userId: string,

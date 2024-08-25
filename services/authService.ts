@@ -32,17 +32,40 @@ export const registerUser = async (
   router: AppRouterInstance,
   setIsLoading: (value: boolean) => void
 ) => {
-  const { email, password, firstName, lastName } = values;
+  const { email, password, firstName, lastName, qualification } = values;
   setIsLoading(true);
   createUserWithEmailAndPassword(auth as Auth, email, password)
     .then(async (cred) => {
       // Attach the user id to the user document
-      const userDoc = doc(usersCollectionRef, cred.user.uid);
+      const userDoc = await doc(usersCollectionRef, cred.user.uid);
       // Set the user
       await setDoc(userDoc, {
         email,
         firstName,
         lastName,
+        userId: cred.user.uid,
+        level: qualification,
+        govt: "",
+        state: "",
+        phone: "",
+        membership: "",
+        nationality: "",
+        year: "",
+        schools: "",
+        gender: "",
+        certificate: "",
+        membershipNumber: "",
+        institute: "",
+        dob: "",
+        qualifications: "",
+        certificateAward: "",
+        acceptanceFee: false,
+        foundationI: false,
+        foundationII: false,
+        intermediateI: false,
+        intermediateII: false,
+        finalI: false,
+        finalII: false,
       });
       console.log(cred);
     })
@@ -80,6 +103,11 @@ export const loginUser = async (
 
     if (cred) {
       await postToken(cred.user);
+      toast.success("Successfully Logged In");
+      setIsLoading(false);
+      setTimeout(() => {
+        router.push("/");
+      }, 2000);
     }
 
     if (!cred.user) {
@@ -91,12 +119,6 @@ export const loginUser = async (
     const errorMessage = getFirebaseErrorMessage(error.code);
     toast.error(errorMessage);
     setIsLoading(false);
-  } finally {
-    setIsLoading(false);
-    toast.success("Successfully Logged In");
-    setTimeout(() => {
-      router.push("/");
-    }, 2000);
   }
 };
 
@@ -152,6 +174,21 @@ export const loginWithGoogle = async (router: AppRouterInstance) => {
           lastName,
           userId: cred.user.uid,
           picture: cred.user.photoURL,
+          govt: "",
+          state: "",
+          phone: "",
+          membership: "",
+          nationality: "",
+          year: "",
+          schools: "",
+          gender: "",
+          certificate: "",
+          membershipNumber: "",
+          institute: "",
+          dob: "",
+          qualifications: "",
+          certificateAward: "",
+          acceptanceFee: false,
         });
 
         console.log("First time login");

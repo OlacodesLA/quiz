@@ -23,7 +23,8 @@ const AppLayout = async () => {
   const user = await getUser();
 
   if (user) {
-    console.log("user found", user);
+    console.log("user found");
+    // console.log("user found", user);
   } else {
     console.error("user not found");
   }
