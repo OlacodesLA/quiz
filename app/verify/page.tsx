@@ -14,9 +14,9 @@ export default async function Home() {
   if (!user) {
     redirect("/auth/login");
   }
-  const me = await getUserById(user.uid);
+  const me = await getUserById(user?.user_id);
 
-  // console.log("Real_User", user);
+  console.log("Real_User", user);
   return (
     <WithSidebar
       sidebarContent={SidebarContent}

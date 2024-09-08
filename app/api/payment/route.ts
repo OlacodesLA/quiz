@@ -54,10 +54,19 @@ export async function POST(req: NextRequest, res: NextResponse) {
 
     console.log("userId", userId);
 
-    const paymentDocRef = doc(db, "users", userId, "payments", levelName);
-    const LevelDoc = doc(db, "users", userId);
+    const paymentDocRef = doc(db, "payments", reference);
 
-    await setDoc(paymentDocRef, { level: levelName, verified: false });
+    // Use setDoc to create the document in the payments collection
+    await setDoc(paymentDocRef, {
+      userId,
+      levelName,
+      name,
+      amount,
+      email,
+      verified: false,
+      link: response?.data?.data?.authorization_url,
+      createdAt: new Date(),
+    });
 
     const data = {
       levelName,

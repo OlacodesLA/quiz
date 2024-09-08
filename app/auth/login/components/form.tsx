@@ -95,7 +95,7 @@ const LoginForm = (props: Props) => {
           </div>
         </motion.div>
 
-        <motion.div variants={childVariants}>
+        {/* <motion.div variants={childVariants}>
           <button
             type="button"
             onClick={onGoogle}
@@ -109,7 +109,7 @@ const LoginForm = (props: Props) => {
             />
             <span>Login with Google</span>
           </button>
-        </motion.div>
+        </motion.div> */}
       </StaggerChildren>
     </form>
   );

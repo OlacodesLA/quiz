@@ -4,7 +4,7 @@ import { cookies, headers } from "next/headers";
 import { NextRequest, NextResponse } from "next/server";
 import { Redirect } from "next";
 import { db } from "@/config/firebase";
-import { doc, setDoc } from "firebase/firestore";
+import { doc, setDoc, updateDoc } from "firebase/firestore";
 
 export async function POST(req: NextRequest, res: NextResponse) {
   const body = await req.json();
@@ -12,6 +12,9 @@ export async function POST(req: NextRequest, res: NextResponse) {
 
   if (!reference) {
     return new NextResponse("Reference is required", { status: 401 });
+  }
+  if (!userId) {
+    return new NextResponse("User is required", { status: 401 });
   }
 
   if (!levelName) {
@@ -31,22 +34,46 @@ export async function POST(req: NextRequest, res: NextResponse) {
 
     // console.log("PAYMENT_INITIATED", response.data);
 
-    console.log(response.data?.data?.message);
+    console.log("Payment", response?.data);
+    const paymentStatus = response?.data?.status;
+    const paymentMessage = response?.data?.message;
+    const authorizationUrl = response?.data?.authorization_url;
 
     console.log("userId", userId);
 
-    const paymentDocRef = doc(db, "users", userId, "payments", levelName);
-    const LevelDoc = doc(db, "users", userId);
-    const dynamicObject = {} as any;
-    dynamicObject[levelName] = true;
-    await setDoc(paymentDocRef, { level: levelName, verified: true });
-    await setDoc(LevelDoc, dynamicObject);
+    if (paymentStatus) {
+      // Reference to the top-level "payments" collection
+      const paymentDocRef = doc(db, "payments", reference);
 
-    return NextResponse.json({
-      success: true,
-      message: "Payment verified successfully",
-      data: response?.data?.data, // Include the ID in the response
-    });
+      // Update the document to mark the payment as verified
+      await setDoc(
+        paymentDocRef,
+        {
+          levelName,
+          userId,
+          verified: true,
+          verificationMessage: paymentMessage,
+          verifiedAt: new Date(),
+        },
+        { merge: true }
+      ); // merge: true ensures that existing data is not overwritten
+      // Reference to the user's document
+      const userDocRef = doc(db, "users", userId);
+
+      // Update the user document to set the acceptanceFee field to true
+      await updateDoc(userDocRef, {
+        //@ts-ignore
+        [toLowerFirstLetter(levelName)]: true,
+      });
+
+      return NextResponse.json({
+        success: true,
+        message: "Payment verified successfully",
+        data: response?.data?.data,
+      });
+    } else {
+      return new NextResponse("Payment verification failed", { status: 400 });
+    }
   } catch (error: any) {
     console.error(error);
     if (error.response.data.status === false) {
@@ -57,4 +84,9 @@ export async function POST(req: NextRequest, res: NextResponse) {
       { status: 500 }
     );
   }
+}
+
+function toLowerFirstLetter(str?: string) {
+  if (!str) return str; // Return if empty string or undefined
+  return str.charAt(0).toLowerCase() + str.slice(1);
 }

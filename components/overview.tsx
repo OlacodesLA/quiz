@@ -1,22 +1,18 @@
+"use client";
 import React from "react";
 import { Card, CardHeader, CardTitle, CardContent } from "./ui/card";
 import { BookText, PenLine, TrendingUp } from "lucide-react";
 import getUser from "@/lib/get-user";
 import { getUserById } from "@/services/profileServices";
 import { redirect } from "next/navigation";
+import { getCurrentLevel, getLevelStatus } from "@/utils";
 
 type Props = {};
 
-const OverviewCard = async (props: Props) => {
-  const user = await getUser();
+const OverviewCard = async (me: any) => {
+  const { currentLevel, levelsLeft, paidLevels } = getLevelStatus(me?.me);
 
-  if (!user) {
-    redirect("/auth/login");
-  }
-
-  const me = await getUserById(user.uid);
-
-  console.log("me", me);
+  console.log("me", me?.me);
   return (
     <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3 mt-3 mx-6">
       <Card>
@@ -25,9 +21,13 @@ const OverviewCard = async (props: Props) => {
           <TrendingUp />
         </CardHeader>
         <CardContent>
-          <div className="text-2xl font-bold">{me?.level}</div>
+          <div className="text-2xl font-bold">
+            {me?.me?.level ?? "No Level Yet"}
+          </div>
           <p className="text-xs text-muted-foreground">
-            4 more levels to Graduate
+            {levelsLeft == 0
+              ? "All Levels Completed"
+              : `${levelsLeft} more levels to Graduate`}
           </p>
         </CardContent>
       </Card>
@@ -49,9 +49,9 @@ const OverviewCard = async (props: Props) => {
           <BookText />
         </CardHeader>
         <CardContent>
-          <div className="text-2xl font-bold">0</div>
+          <div className="text-2xl font-bold">{paidLevels}</div>
           <p className="text-xs text-muted-foreground">
-            You have 0 courses paid
+            You have {paidLevels} courses paid
           </p>
         </CardContent>
       </Card>

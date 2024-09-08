@@ -53,6 +53,7 @@ export const registerUser = async (
         year: "",
         schools: "",
         gender: "",
+        picture: "",
         certificate: "",
         membershipNumber: "",
         institute: "",
@@ -105,9 +106,7 @@ export const loginUser = async (
       await postToken(cred.user);
       toast.success("Successfully Logged In");
       setIsLoading(false);
-      setTimeout(() => {
-        router.push("/");
-      }, 2000);
+      router.push("/");
     }
 
     if (!cred.user) {

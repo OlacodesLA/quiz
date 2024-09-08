@@ -47,16 +47,16 @@ const AvatarComp = ({ user }: any) => {
   }
 
   useEffect(() => {
-    if (user.name) {
-      const initials = getInitials(user.name);
+    if (user?.name) {
+      const initials = getInitials(user?.name);
       setInitial(initials);
-      setName(user.name);
+      setName(user?.name);
     }
 
-    if (user.firstName) {
-      const initials = getInitials(`${user.firstName} ${user.lastName}`);
+    if (user?.firstName) {
+      const initials = getInitials(`${user?.firstName} ${user?.lastName}`);
       setInitial(initials);
-      setName(`${user.firstName} ${user.lastName}`);
+      setName(`${user?.firstName} ${user?.lastName}`);
     }
   }, [user]);
 

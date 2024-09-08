@@ -19,6 +19,7 @@ export const getUserById = async (userId: string) => {
     const userDocRef = doc(usersCollectionRef, userId);
 
     const userDocSnapshot = await getDoc(userDocRef);
+    // console.log("UserDoc", userDocSnapshot.data());
 
     if (!userDocSnapshot.exists()) {
       // Document does not exist

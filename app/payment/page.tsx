@@ -6,6 +6,7 @@ import InitiatePayment from "./components/page";
 import getUser from "@/lib/get-user";
 import { redirect } from "next/navigation";
 import { getUserById } from "@/services/profileServices";
+import { Suspense } from "react";
 
 export default async function Home() {
   const user = await getUser();
@@ -13,9 +14,11 @@ export default async function Home() {
   if (!user) {
     redirect("/auth/login");
   }
-  const me = await getUserById(user.uid);
 
-  // console.log("Real_User", user);
+  const me = await getUserById(user.user_id);
+
+  console.log("Real_User", user);
+  console.log("Real_Me", me);
   return (
     <WithSidebar
       sidebarContent={SidebarContent}
@@ -24,7 +27,9 @@ export default async function Home() {
       <div className="">
         <Navbar />
         <Banner />
-        <InitiatePayment user={me} />
+        <Suspense fallback="">
+          <InitiatePayment user={me} />
+        </Suspense>
       </div>
     </WithSidebar>
   );

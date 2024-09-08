@@ -29,6 +29,7 @@ function convertToTitleCase(str: string) {
 }
 
 const InitiatePayment = ({ user }: any) => {
+  console.log("Payment User", user);
   return (
     <div className="px-6">
       <div className="max-w-screen-xl  py-8  sm:py-12 lg:py-16">
@@ -63,10 +64,10 @@ const PaymentCard: React.FC<PaymentCardProps> = ({ levelName, fees, user }) => {
     console.log(convertedLevel, user?.level, levelName);
     if (convertedLevel === user?.level || convertedLevel === "AcceptanceFee") {
       const response = (await makePayment({
-        userId: user.userId,
-        name: user.name ?? `${user?.firstName} ${user?.lastName}`,
+        userId: user?.userId,
+        name: user?.name ?? `${user?.firstName} ${user?.lastName}`,
         amount: Math.floor(totalAmount / 10),
-        email: user.email,
+        email: user?.email,
         levelName: convertedLevel,
       })) as any;
       console.log(
@@ -82,9 +83,26 @@ const PaymentCard: React.FC<PaymentCardProps> = ({ levelName, fees, user }) => {
 
   const price = Object.values(fees).reduce((sum, fee) => sum + fee, 0);
 
+  const hasPaid = user?.[levelName] === true;
+  const isCurrentLevel = convertToTitleCase(levelName) === user?.level;
+
+  console.log(
+    convertToTitleCase(levelName),
+    user?.level,
+    isCurrentLevel,
+    hasPaid
+  );
+
   return (
     <div>
-      <Pricing level={levelName} price={price} pay={pay} fees={fees} />
+      <Pricing
+        level={levelName}
+        price={price}
+        pay={pay}
+        fees={fees}
+        isCurrentLevel={isCurrentLevel}
+        hasPaid={hasPaid}
+      />
     </div>
   );
 };
@@ -93,31 +111,31 @@ const feeStructure = {
   acceptanceFee: {
     acceptanceFee: 5000,
   },
-  foundationLevelI: {
+  foundationI: {
     studyPackFee: 4000,
     examinationFee: 12000,
   },
-  foundationLevelII: {
+  foundationII: {
     exemptionFee: 10000,
     studyPackFee: 4000,
     examinationFee: 14000,
   },
-  intermediateLevelI: {
+  intermediateI: {
     exemptionFee: 12500,
     studyPackFee: 4500,
     examinationFee: 16000,
   },
-  intermediateLevelII: {
+  intermediateII: {
     exemptionFee: 15000,
     studyPackFee: 4500,
     examinationFee: 18000,
   },
-  finalLevelI: {
+  finalI: {
     exemptionFee: 20000,
     studyPackFee: 5000,
     examinationFee: 20000,
   },
-  finalLevelII: {
+  finalII: {
     studyPackFee: 5000,
     examinationFee: 25000,
   },

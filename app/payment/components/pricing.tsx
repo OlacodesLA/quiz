@@ -6,6 +6,8 @@ type Props = {
   price: number;
   pay: () => void;
   fees: Record<string, number>;
+  hasPaid: boolean;
+  isCurrentLevel: boolean;
 };
 
 const formatFeeName = (feeName: string) => {
@@ -14,7 +16,14 @@ const formatFeeName = (feeName: string) => {
   return words.join(" ");
 };
 
-const Pricing = ({ level, price, pay, fees }: Props) => {
+const Pricing = ({
+  level,
+  price,
+  pay,
+  fees,
+  hasPaid,
+  isCurrentLevel,
+}: Props) => {
   const formatAmount = (amount: number) => {
     const formattAmount = new Intl.NumberFormat("en-NG", {
       style: "currency",
@@ -32,7 +41,11 @@ const Pricing = ({ level, price, pay, fees }: Props) => {
       </h2>
 
       <p className="mt-2 text-gray-700">Initiate your journey. Make Payment.</p>
-
+      {isCurrentLevel && !hasPaid ? (
+        <div className="text-red-500 font-semibold">
+          You are yet to pay for your level
+        </div>
+      ) : null}
       <p className="mt-2 sm:mt-4">
         <strong className="text-3xl font-bold text-gray-900 sm:text-4xl">
           {" "}
@@ -42,12 +55,16 @@ const Pricing = ({ level, price, pay, fees }: Props) => {
         <span className="text-sm font-medium text-gray-700">/level</span>
       </p>
 
-      <button
-        className="mt-4 block rounded border border-slate-900 bg-slate-900 px-12 py-3 text-center text-sm font-medium text-white hover:bg-transparent hover:text-slate-900 focus:outline-none focus:ring active:text-slate-900 sm:mt-6"
-        onClick={pay}
-      >
-        Make Payment
-      </button>
+      {hasPaid ? (
+        <div className="text-green-500 font-semibold">Paid</div>
+      ) : (
+        <button
+          className="mt-4 block rounded border border-slate-900 bg-slate-900 px-12 py-3 text-center text-sm font-medium text-white hover:bg-transparent hover:text-slate-900 focus:outline-none focus:ring active:text-slate-900 sm:mt-6"
+          onClick={pay}
+        >
+          Make Payment
+        </button>
+      )}
 
       <div className="">
         {/* <ul className="">

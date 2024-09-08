@@ -1,3 +1,4 @@
+"Use client";
 import { IProfilePayload } from "@/interfaces/components/profile";
 import React from "react";
 import ImageInfo from "./imageInfo";
@@ -11,15 +12,16 @@ type Props = {
 };
 
 const ProfileUI = ({ user }: Props) => {
-  console.log("Usser", user);
-  const { firstName, lastName, picture, level } = user;
+  console.log("Profile ID", user?.userId);
+  const { firstName, lastName, picture, level, userId } = user;
   return (
-    <div className="mx-6 mt-6 ">
+    <div className="mx-6 mt-6">
       <ImageInfo
         firstName={firstName}
         lastName={lastName}
         picture={picture}
         level={level}
+        userId={user?.userId}
       />
       <PersonalInfo {...user} user={user} />
       <EducationalInfo {...user} user={user} />

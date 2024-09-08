@@ -9,6 +9,13 @@ import { getUserById } from "@/services/profileServices";
 import { redirect } from "next/navigation";
 
 export default async function Home() {
+  const user = await getUser();
+
+  if (!user) {
+    redirect("/auth/login");
+  }
+
+  const me = await getUserById(user.uid);
   return (
     <WithSidebar
       sidebarContent={SidebarContent}
@@ -17,7 +24,7 @@ export default async function Home() {
       <div className="">
         <Navbar />
         <Banner />
-        <OverviewCard />
+        <OverviewCard me={me} />
       </div>
     </WithSidebar>
   );
