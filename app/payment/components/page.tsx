@@ -28,6 +28,10 @@ function convertToTitleCase(str: string) {
   );
 }
 
+function removeSpaces(str: string) {
+  return str?.replace(/\s+/g, "");
+}
+
 const InitiatePayment = ({ user }: any) => {
   console.log("Payment User", user);
   return (
@@ -62,7 +66,10 @@ const PaymentCard: React.FC<PaymentCardProps> = ({ levelName, fees, user }) => {
     console.log(Number(totalAmount / 1000));
 
     console.log(convertedLevel, user?.level, levelName);
-    if (convertedLevel === user?.level || convertedLevel === "AcceptanceFee") {
+    if (
+      convertedLevel === removeSpaces(user?.level) ||
+      convertedLevel === "AcceptanceFee"
+    ) {
       const response = (await makePayment({
         userId: user?.userId,
         name: user?.name ?? `${user?.firstName} ${user?.lastName}`,
@@ -84,11 +91,12 @@ const PaymentCard: React.FC<PaymentCardProps> = ({ levelName, fees, user }) => {
   const price = Object.values(fees).reduce((sum, fee) => sum + fee, 0);
 
   const hasPaid = user?.[levelName] === true;
-  const isCurrentLevel = convertToTitleCase(levelName) === user?.level;
+  const isCurrentLevel =
+    convertToTitleCase(levelName) === removeSpaces(user?.level);
 
   console.log(
     convertToTitleCase(levelName),
-    user?.level,
+    removeSpaces(user?.level),
     isCurrentLevel,
     hasPaid
   );

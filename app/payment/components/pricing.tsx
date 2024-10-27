@@ -41,6 +41,7 @@ const Pricing = ({
       </h2>
 
       <p className="mt-2 text-gray-700">Initiate your journey. Make Payment.</p>
+
       {isCurrentLevel && !hasPaid ? (
         <div className="text-red-500 font-semibold">
           You are yet to pay for your level

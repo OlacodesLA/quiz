@@ -45,7 +45,7 @@ const courseLevels: CourseLevel[] = [
     id: "foundationI",
     name: "Foundation Level I",
     emoji: "🌱",
-    pdfUrl: "/courses/foundation-I.pdf",
+    pdfUrl: "/courses/foundation-1.pdf",
     courses: [
       { id: "F1/001", name: "Use of English", code: "F1/001" },
       {
@@ -65,7 +65,7 @@ const courseLevels: CourseLevel[] = [
     id: "foundationII",
     name: "Foundation Level II",
     emoji: "🌿",
-    pdfUrl: "/courses/foundation-II.pdf",
+    pdfUrl: "/courses/foundation-2.pdf",
     courses: [
       { id: "F2/001", name: "Intro. to Sociology of Religion", code: "F2/001" },
       {
@@ -85,7 +85,7 @@ const courseLevels: CourseLevel[] = [
     id: "intermediateI",
     name: "Intermediate Level I",
     emoji: "🌳",
-    pdfUrl: "/courses/intermediate-I.pdf",
+    pdfUrl: "/courses/intermediate-1.pdf",
     courses: [
       { id: "INT1/001", name: "Fundraising Management", code: "INT1/001" },
       {
@@ -101,7 +101,7 @@ const courseLevels: CourseLevel[] = [
     id: "intermediateII",
     name: "Intermediate Level II",
     emoji: "🌴",
-    pdfUrl: "/courses/intermediate-II.pdf",
+    pdfUrl: "/courses/intermediate-2.pdf",
     courses: [
       {
         id: "INT2/001",
@@ -125,7 +125,7 @@ const courseLevels: CourseLevel[] = [
     id: "finalI",
     name: "Final Level I",
     emoji: "🌲",
-    pdfUrl: "/courses/final-I.pdf",
+    pdfUrl: "/courses/final-1.pdf",
     courses: [
       { id: "FL1/001", name: "Managing Church Personnel", code: "FL1/001" },
       { id: "FL1/002", name: "Church Packaging & Branding", code: "FL1/002" },
@@ -137,7 +137,7 @@ const courseLevels: CourseLevel[] = [
     id: "finalII",
     name: "Final Level II",
     emoji: "🎓",
-    pdfUrl: "/courses/final-II.pdf",
+    pdfUrl: "/courses/final-2.pdf",
     courses: [
       { id: "FL2/001", name: "Church Conflict Management", code: "FL2/001" },
       {
