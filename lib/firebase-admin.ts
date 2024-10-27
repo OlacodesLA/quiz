@@ -1,14 +1,11 @@
 import { initializeApp, getApps, cert } from "firebase-admin/app";
 import { getAuth } from "firebase-admin/auth";
-//Go to your firebase project console ie the firebase site > project settings > service accounts tab > generate new private key button
-//save the file > rename it service_account.json > put in the root of this project
-import serviceAccount from "@/service_account.json";
 
 const firebaseAdminConfig = {
   credential: cert({
-    privateKey: serviceAccount.private_key,
-    clientEmail: serviceAccount.client_email,
-    projectId: serviceAccount.project_id,
+    projectId: process.env.NEXT_PUBLIC_PROJECT_ID,
+    privateKey: process.env.NEXT_PUBLIC_PRIVATE_KEY?.replace(/\\n/g, "\n"),
+    clientEmail: process.env.NEXT_PUBLIC_CLIENT_EMAIL,
   }),
 };
 
