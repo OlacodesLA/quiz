@@ -9,8 +9,9 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { BookOpen, Download, Lock } from "lucide-react";
+import { BookOpen, Download, Lock, Router } from "lucide-react";
 import { toast } from "sonner";
+import { useRouter } from "next/navigation";
 
 interface Course {
   id: string;
@@ -151,121 +152,148 @@ const courseLevels: CourseLevel[] = [
   },
 ];
 
+function removeSpacesAndLowercaseFirst(str: string) {
+  const noSpaces = str.replace(/\s+/g, "");
+  return noSpaces.charAt(0).toLowerCase() + noSpaces.slice(1);
+}
+
 export default function CourseList({ userCourseList }: any) {
-  const [loadingStates, setLoadingStates] = useState<Record<string, boolean>>(
-    {}
+  const [loading, setLoading] = useState(false);
+
+  const router = useRouter();
+
+  // Extract the current level from the userCourseList
+  const userCurrentLevel = userCourseList.level; // e.g., "Foundation II"
+
+  console.log("User Current Level:", userCurrentLevel);
+  console.log(
+    "Fixed User Current Level:",
+    removeSpacesAndLowercaseFirst(userCurrentLevel.toLowerCase())
   );
 
-  const handleDownload = async (level: CourseLevel) => {
-    if (!userCourseList[level.id]) {
-      toast.error("Access Denied", {
-        description: "You need to purchase this course level to download it.",
-      });
-      return;
-    }
+  // Find the matching course level by matching a portion of the name
+  const currentCourseLevel = courseLevels.find((level) =>
+    level.id
+      .toLowerCase()
+      .includes(removeSpacesAndLowercaseFirst(userCurrentLevel.toLowerCase()))
+  );
 
-    setLoadingStates((prev) => ({ ...prev, [level.id]: true }));
+  // Check if the study pack fee is paid for the current level
+  let studyPackPaid = false;
+  if (currentCourseLevel) {
+    // Construct fee key (e.g., "foundationII_studyPackFee")
+    const feeKey = `${currentCourseLevel.id}_studyPackFee`;
+    studyPackPaid = userCourseList[feeKey];
+  }
 
+  console.log("User Course List:", userCourseList);
+  console.log("Current Course Level:", currentCourseLevel);
+  console.log("Study Pack Paid:", studyPackPaid);
+
+  if (!currentCourseLevel) {
+    return <p className="text-center text-gray-600">No courses available.</p>;
+  }
+
+  const handleDownload = async () => {
+    setLoading(true);
     try {
-      const response = await fetch(level.pdfUrl);
+      const response = await fetch(currentCourseLevel.pdfUrl);
       if (!response.ok) throw new Error("Failed to fetch PDF");
 
       const blob = await response.blob();
       const url = window.URL.createObjectURL(blob);
       const a = document.createElement("a");
-      a.style.display = "none";
       a.href = url;
-      a.download = `${level.name}.pdf`;
+      a.download = `${currentCourseLevel.name}.pdf`;
       document.body.appendChild(a);
       a.click();
       window.URL.revokeObjectURL(url);
 
       toast.success("Download Successful", {
-        description: `${level.name} has been downloaded successfully.`,
+        description: `${currentCourseLevel.name} has been downloaded successfully.`,
       });
     } catch (error) {
-      console.error("Download error:", error);
       toast.error("Download Failed", {
         description:
-          "There was an error downloading the course level. Please try again.",
+          "There was an error downloading the course. Please try again.",
       });
     } finally {
-      setLoadingStates((prev) => ({ ...prev, [level.id]: false }));
+      setLoading(false);
     }
   };
 
-  const handleReadOnline = (level: CourseLevel) => {
-    if (!userCourseList[level.id]) {
-      toast.error("Access Denied", {
-        description:
-          "You need to purchase this course level to read it online.",
-      });
-      return;
-    }
-
-    window.open(level.pdfUrl, "_blank");
+  const handleReadOnline = () => {
+    window.open(currentCourseLevel.pdfUrl, "_blank");
   };
 
   return (
     <div className="container mx-auto py-8">
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        {courseLevels.map((level) => (
-          <Card key={level.id} className="flex flex-col">
-            <CardHeader>
-              <CardTitle className="flex items-center justify-between">
-                <span>
-                  {level.emoji} {level.name}
-                </span>
-                {userCourseList[level.id] ? (
-                  <span className="text-sm font-normal text-green-600">
-                    Access Granted ✅
-                  </span>
-                ) : (
-                  <span className="text-sm font-normal text-red-600">
-                    Access Denied 🔒
-                  </span>
-                )}
-              </CardTitle>
-            </CardHeader>
-            <CardContent className="flex-grow">
-              <ul className="list-disc list-inside space-y-1">
-                {level.courses.map((course) => (
-                  <li key={course.id} className="text-sm">
-                    {course.name}{" "}
-                    <span className="text-muted-foreground">
-                      ({course.code})
-                    </span>
-                  </li>
-                ))}
-              </ul>
-            </CardContent>
-            <CardFooter className="flex justify-between">
-              <Button
-                variant="outline"
-                onClick={() => handleDownload(level)}
-                disabled={!userCourseList[level.id] || loadingStates[level.id]}
-              >
-                {loadingStates[level.id] ? (
-                  "Downloading..."
-                ) : (
-                  <>
-                    <Download className="mr-2 h-4 w-4" />
-                    Download PDF
-                  </>
-                )}
-              </Button>
-              <Button
-                variant="secondary"
-                onClick={() => handleReadOnline(level)}
-                disabled={!userCourseList[level.id]}
-              >
-                <BookOpen className="mr-2 h-4 w-4" />
-                Read Online
-              </Button>
-            </CardFooter>
-          </Card>
-        ))}
-      </div>
+      <Card className="flex flex-col">
+        <CardHeader>
+          <CardTitle className="flex items-center justify-between">
+            <span>
+              {currentCourseLevel.emoji} {currentCourseLevel.name}
+            </span>
+            {studyPackPaid ? (
+              <span className="text-sm font-normal text-green-600">
+                Paid ✅
+              </span>
+            ) : (
+              <span className="text-sm font-normal text-red-600">Not paid</span>
+            )}
+          </CardTitle>
+        </CardHeader>
+        <CardContent>
+          {studyPackPaid ? (
+            <div>
+              <p>Your study pack fee has been paid.</p>
+            </div>
+          ) : (
+            <div>
+              <p>Your are yet to pay for study pack.</p>
+            </div>
+          )}
+          <ul className="list-disc list-inside space-y-1">
+            {currentCourseLevel.courses.map((course) => (
+              <li key={course.id} className="text-sm">
+                {course.name}{" "}
+                <span className="text-muted-foreground">({course.code})</span>
+              </li>
+            ))}
+          </ul>
+        </CardContent>
+        {studyPackPaid ? (
+          <CardFooter className="flex justify-between">
+            <Button
+              variant="outline"
+              onClick={handleDownload}
+              disabled={loading}
+            >
+              {loading ? (
+                "Downloading..."
+              ) : (
+                <>
+                  <Download className="mr-2 h-4 w-4" /> Download PDF
+                </>
+              )}
+            </Button>
+            <Button variant="secondary" onClick={handleReadOnline}>
+              <BookOpen className="mr-2 h-4 w-4" />
+              Read Online
+            </Button>
+          </CardFooter>
+        ) : (
+          <div className="flex w-full px-4 justify-center">
+            <Button
+              variant="default"
+              className="w-full my-2"
+              onClick={() => router.push("/payment")}
+            >
+              Make payment
+            </Button>
+          </div>
+        )}
+      </Card>
     </div>
   );
 }

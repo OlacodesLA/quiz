@@ -15,6 +15,7 @@ import { Separator } from "@/components/ui/separator";
 type Course = {
   name: string;
   code: string;
+  hash?: string;
 };
 
 type CourseCategory = {
@@ -78,18 +79,18 @@ const Exam: React.FC<Props> = ({ user }) => {
 
   return (
     <div className="w-full px-6">
-      <Button
+      {/* <Button
         type="button"
         onClick={() => updateData(officeOrganisationQuestions)}
       >
         Update Data
-      </Button>
+      </Button> */}
       <div className="">
         <ExamHeading heading="• Current Level Exam" />
         <Levels stage="Current" level={categorizedCourses.currentLevel} />
       </div>
-      <Separator className="h-0.5 my-10" />
-      <div className="">
+      {/* <Separator className="h-0.5 my-10" /> */}
+      {/* <div className="">
         <ExamHeading heading="• Completed Level Exam" />
         <Levels stage="Completed" level={categorizedCourses.completedLevels} />
       </div>
@@ -97,21 +98,25 @@ const Exam: React.FC<Props> = ({ user }) => {
       <div className="pb-20">
         <ExamHeading heading="• Upcoming Level Exam" />
         <Levels stage="Upcoming" level={categorizedCourses.upcomingLevels} />
-      </div>
+      </div> */}
     </div>
   );
 };
 
 export default Exam;
 
-const obj: CoursesObject = {
+export const obj: CoursesObject = {
   "Foundation I": {
     code: "F1",
     courses: [
       { name: "Use of English Language 1", code: "F1/001" },
-      { name: "Introduction to Church Office Administration", code: "F1/002" },
+      {
+        name: "Introduction to Church Office Administration",
+        code: "F1/002",
+        hash: "F0zzzm",
+      },
       { name: "Introduction to Philosophy of Religion", code: "F1/003" },
-      { name: "Introduction to Management", code: "F1/004" },
+      { name: "Introduction to Management", code: "F1/004", hash: "F0zzzn" },
     ],
   },
   "Foundation II": {
@@ -121,45 +126,70 @@ const obj: CoursesObject = {
       {
         name: "Introduction to Office Management Principle & Techniques",
         code: "F2/002",
+        hash: "F0zzzq",
       },
-      { name: "Introduction to Computer", code: "F2/003" },
-      { name: "Church Office Ethics and Practice", code: "F2/004" },
+      { name: "Introduction to Computer", code: "F2/003", hash: "F0zzzl" },
+      {
+        name: "Church Office Ethics and Practice",
+        code: "F2/004",
+        hash: "F0zzzs",
+      },
     ],
   },
   "Intermediate I": {
     code: "INT1",
     courses: [
-      { name: "Fundraising Management", code: "INT1/001" },
+      { name: "Fundraising Management", code: "INT1/001", hash: "F0zzzx" },
       { name: "Effective Communication Skill", code: "INT1/002" },
-      { name: "Hospitality Management", code: "INT1/003" },
-      { name: "Church Event Management", code: "INT1/004" },
+      { name: "Hospitality Management", code: "INT1/003", hash: "F0zzzp" },
+      { name: "Church Event Management", code: "INT1/004", hash: "F0zzzk" },
     ],
   },
   "Intermediate II": {
     code: "INT2",
     courses: [
-      { name: "Church Leadership and Administration", code: "INT2/001" },
-      { name: "Church Finance and Accounting Procedure", code: "INT2/002" },
-      { name: "Church Security and Safety Management", code: "INT2/003" },
-      { name: "Information Management", code: "INT2/004" },
+      {
+        name: "Church Leadership and Administration",
+        code: "INT2/001",
+        hash: "F0zzzh",
+      },
+      {
+        name: "Church Finance and Accounting Procedure",
+        code: "INT2/002",
+        hash: "F0zzzu",
+      },
+      {
+        name: "Church Security and Safety Management",
+        code: "INT2/003",
+        hash: "F0zzzi",
+      },
+      { name: "Information Management", code: "INT2/004", hash: "F0zzzo" },
     ],
   },
   "Final Level I": {
     code: "FL1",
     courses: [
-      { name: "Managing Church Personnel", code: "FL1/001" },
-      { name: "Church Packaging and Branding", code: "FL1/002" },
+      { name: "Managing Church Personnel", code: "FL1/001", hash: "F0zzzf" },
+      {
+        name: "Church Packaging and Branding",
+        code: "FL1/002",
+        hash: "F0zzzt",
+      },
       { name: "Church Database Management", code: "FL1/003" },
-      { name: "Church Property Management", code: "FL1/004" },
+      { name: "Church Property Management", code: "FL1/004", hash: "F0zzzv" },
     ],
   },
   "Final Level II": {
     code: "FL2",
     courses: [
-      { name: "Church Conflict Management", code: "FL2/001" },
-      { name: "Church Insurance and Risk Management", code: "FL2/002" },
-      { name: "Church Strategic Planning", code: "FL2/003" },
-      { name: "The Church and Law", code: "FL2/004" },
+      { name: "Church Conflict Management", code: "FL2/001", hash: "F0zzzr" },
+      {
+        name: "Church Insurance and Risk Management",
+        code: "FL2/002",
+        hash: "F0zzzj",
+      },
+      { name: "Church Strategic Planning", code: "FL2/003", hash: "F0zzze" },
+      { name: "The Church and Law", code: "FL2/004", hash: "F0zzzg" },
       { name: "Professional Internship Programme", code: "FL2/005" },
     ],
   },

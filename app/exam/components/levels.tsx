@@ -103,11 +103,7 @@ const Levels: React.FC<Props> = ({ level, stage }) => {
 
                         {stage === "Current" && (
                           <Button type="button" size="sm" variant="outline">
-                            <Link
-                              href={`/exam/${course.code.replace("/", "-")}`}
-                            >
-                              Start
-                            </Link>
+                            <Link href={`/exam/${course.hash}`}>Start</Link>
                           </Button>
                         )}
                       </div>

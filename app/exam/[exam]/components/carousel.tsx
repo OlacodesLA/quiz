@@ -21,49 +21,66 @@ import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Label } from "@/components/ui/label";
 import { type CarouselApi } from "@/components/ui/carousel";
 import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
+import { toast } from "sonner";
+import { useSelector } from "react-redux";
 
-export function ECarousel({ setSelectedAnswers, questions, setApi }: any) {
+export function ECarousel({
+  setSelectedAnswers,
+  questions,
+  setApi,
+  user,
+  handleSubmit,
+  isSubmitting,
+}: any) {
   const [selectedValues, setSelectedValues] = React.useState<{
-    [key: string]: string;
+    [key: number]: string;
   }>({});
 
-  const handleValueChange = (questionId: string, value: string) => {
+  const handleValueChange = (index: number, value: string) => {
     setSelectedValues((prevValues) => ({
       ...prevValues,
-      [questionId]: value,
+      [index]: value,
     }));
 
     setSelectedAnswers((prevAnswers: any) => {
-      const updatedAnswers = prevAnswers?.map((answer: any) => ({
+      const updatedAnswers = prevAnswers?.map((answer: any, idx: number) => ({
         ...answer,
-        selectedAnswer:
-          answer.id === questionId ? value : answer.selectedAnswer,
+        selectedAnswer: idx === index ? value : answer.selectedAnswer,
       }));
       return updatedAnswers;
     });
   };
 
-  const handleSubmit = () => {
-    const submittedAnswers = questions.map((question: any) => ({
-      id: question.id,
-      text: question.text,
-      options: question.options,
-      correctAnswer: question.correctAnswer,
-      selectedAnswer: selectedValues[question.id] || null,
-    }));
-    setSelectedAnswers(submittedAnswers);
-    console.log("Submitted Answers:", submittedAnswers);
+  const parseOptions = (optionsString: string): string[] => {
+    // Split by pattern "(x) " where x is any letter and extract the text after it
+    // console.log("optionsString", optionsString);
+    return optionsString
+      ?.split(/\([a-z]\)\s+/)
+      ?.filter((option) => option.trim().length > 0);
   };
 
   return (
     <Carousel setApi={setApi} className="w-full min-w-[300px]">
       <CarouselContent className="mb-3">
         {questions?.map((question: any, index: number) => {
+          const optionsArray =
+            question.options &&
+            question.options.length < 2 &&
+            typeof question.options[0] === "string"
+              ? parseOptions(question.options[0])
+              : question.options;
+
           return (
-            <CarouselItem key={question.id}>
+            <CarouselItem key={index}>
               <Card className="">
                 <CardHeader>
-                  <CardTitle>Question {question.id}</CardTitle>
+                  {!question.options ? (
+                    <CardTitle>Theory {index + 1}</CardTitle>
+                  ) : (
+                    <CardTitle>Question {index + 1}</CardTitle>
+                  )}
                 </CardHeader>
                 <CardContent>
                   <p>{question.text}</p>
@@ -71,57 +88,70 @@ export function ECarousel({ setSelectedAnswers, questions, setApi }: any) {
               </Card>
               <Card className="mt-3 pt-5">
                 <CardContent>
-                  <RadioGroup
-                    onValueChange={(value) =>
-                      handleValueChange(question.id, value)
-                    }
-                    value={selectedValues[question.id] || ""}
-                  >
-                    {question.options.map((option: any, index: number) => {
-                      return (
+                  {optionsArray && optionsArray.length > 0 ? (
+                    <RadioGroup
+                      onValueChange={(value) => handleValueChange(index, value)}
+                      value={selectedValues[index] || ""}
+                    >
+                      {optionsArray.map((option: any, optionIndex: number) => (
                         <div
-                          key={option}
+                          key={`${index}-${optionIndex}`}
                           className={`flex items-center relative capitalize space-x-2 rounded-md py-3 px-3 mb-1 ${
-                            selectedValues[question.id] === option
+                            selectedValues[index] === option
                               ? "bg-gray-900"
                               : "bg-gray-100"
                           }`}
                         >
                           <RadioGroupItem
                             value={option}
-                            id={option + index}
+                            id={`${index}-${optionIndex}`}
                             className={`${
-                              selectedValues[question.id] === option
+                              selectedValues[index] === option
                                 ? "bg-gray-100 text-gray-900"
                                 : "bg-gray-100"
                             }`}
                           />
                           <Label
-                            className={`font-normal absolute  w-full h-none translate-x-5 ${
-                              selectedValues[question.id] === option
+                            className={`font-normal absolute w-full h-none translate-x-5 ${
+                              selectedValues[index] === option
                                 ? "text-gray-100 w-full"
                                 : ""
                             }`}
-                            htmlFor={option + index}
+                            htmlFor={`${index}-${optionIndex}`}
                           >
                             {option}
                           </Label>
                         </div>
-                      );
-                    })}
-                  </RadioGroup>
+                      ))}
+                    </RadioGroup>
+                  ) : (
+                    <div className="space-y-2">
+                      <Label htmlFor={`answer-${index}`}>Your Answer:</Label>
+                      <Textarea
+                        id={`answer-${index}`}
+                        value={selectedValues[index] || ""}
+                        onChange={(e) =>
+                          handleValueChange(index, e.target.value)
+                        }
+                        placeholder="Type your answer here..."
+                        className="w-full min-h-36"
+                      />
+                    </div>
+                  )}
                 </CardContent>
               </Card>
             </CarouselItem>
           );
         })}
       </CarouselContent>
-      <Button onClick={handleSubmit}>Submit</Button>
-      <Previous className="absolute flex items-center gap-2 w-24  h-10 bg-gray-900 rounded-md text-white">
-        <p className="">Previous</p>
+      {/* <Button onClick={handleSubmit} disabled={isSubmitting} className="mt-4">
+        {isSubmitting ? "Submitting..." : "Submit Exam"}
+      </Button> */}
+      <Previous className="absolute flex items-center gap-2 w-24 h-10 bg-gray-900 rounded-md text-white">
+        <p>Previous</p>
       </Previous>
       <Next className="absolute flex items-center gap-2 right-0 w-24 h-10 bg-gray-900 rounded-md text-white">
-        <p className="">Next</p>
+        <p>Next</p>
       </Next>
       {/* <Next /> */}
     </Carousel>

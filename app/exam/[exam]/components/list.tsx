@@ -1,39 +1,43 @@
 "use client";
 import React from "react";
+import { Button } from "@/components/ui/button";
 
 type Props = {
   questions: any;
   current: number;
   api: any;
   selectedAnswers: any;
+  handleSubmit: (event: React.MouseEvent<HTMLButtonElement>) => void;
+  isSubmitting: boolean;
 };
 
-const List = ({ selectedAnswers, questions, current, api }: Props) => {
-  const setSlide = (number: number) => {
-    api.scrollTo(number);
-  };
-  console.log(selectedAnswers);
-
+const List = ({
+  selectedAnswers,
+  questions,
+  current,
+  api,
+  handleSubmit,
+  isSubmitting,
+}: Props) => {
+  console.log("Current", current);
   return (
-    <div className="hidden lg:flex  bg-white p-5 mt-1 border  shadow-sm border-slate-200 rounded-lg">
-      <div className="grid grid-cols-5 gap-4  rounded-lg ">
+    <div className="hidden lg:flex flex-col bg-white p-5 mt-1 border shadow-sm border-slate-200 rounded-lg">
+      <div className="grid grid-cols-5 gap-4 rounded-lg">
         {questions.map((question: any, index: number) => (
           <div
             key={index}
-            onClick={() => setSlide(index)}
+            onClick={() => api.scrollTo(index)}
             className={`flex hover:bg-slate-800 border-2 border-gray-800 group ${
               current === index + 1 && "bg-slate-800"
             }
-            
             ${
               selectedAnswers?.some(
-                (answer: { id: string; selectedAnswer: string }) =>
-                  answer.id === question.id &&
+                (answer: { id: number; selectedAnswer: string }) =>
+                  answer.id === index + 1 &&
                   answer.selectedAnswer !== null &&
                   answer.selectedAnswer
               ) && "bg-gray-300"
             }  
-            
             rounded-md transition-all items-center justify-center py-2 px-[22px] cursor-pointer`}
           >
             <span
@@ -46,6 +50,15 @@ const List = ({ selectedAnswers, questions, current, api }: Props) => {
           </div>
         ))}
       </div>
+
+      <Button
+        onClick={handleSubmit}
+        disabled={isSubmitting}
+        className="mt-4 w-full"
+        variant="default"
+      >
+        {isSubmitting ? "Submitting..." : "Submit Exam"}
+      </Button>
     </div>
   );
 };

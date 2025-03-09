@@ -18,6 +18,7 @@ type Props = {
   startExam: any;
   setEndModal: any;
   endTime: any;
+  children: any;
 };
 
 const ExamHeading = ({
@@ -30,6 +31,7 @@ const ExamHeading = ({
   startExam,
   setEndModal,
   endTime,
+  children,
 }: Props) => {
   const router = useRouter();
   const remainingTime = endTime ? Math.max(0, endTime - Date.now() / 1000) : 0;
@@ -39,39 +41,25 @@ const ExamHeading = ({
     setEndModal(true);
   };
 
-  const children = ({ remainingTime }: any) => {
-    const minutes = Math.floor(remainingTime / 60);
-    const seconds = remainingTime % 60;
+  // const children = ({ remainingTime }: any) => {
+  //   const minutes = Math.floor(remainingTime / 60);
+  //   const seconds = remainingTime % 60;
 
-    return `${minutes}:${seconds}`;
-  };
+  //   return `${minutes}:${seconds}`;
+  // };
 
   return (
-    <div className="px-6 py-2 flex items-center justify-between">
-      <div className="">
-        <div className="text-2xl font-semibold font-fredoka">
-          Course: {name}
-        </div>
-        <div className="text-gray-700 text-sm">
-          You have 30 minutes to finish this section
-        </div>
+    <div className="flex items-center justify-between p-4 md:p-6 border-b">
+      <div>
+        <h1 className="text-2xl font-bold">{name}</h1>
+        <p className="text-gray-500">Exam Code: {code}</p>
       </div>
-      <StartModal show={showModal} onClick={startExam} />{" "}
-      <EndModal show={endModal} onClick={() => router.push("/exam")} />{" "}
-      {/* Pass the show prop to control modal visibility */}
-      <div className="h-24">
-        <CountdownCircleTimer
-          isPlaying
-          duration={remainingTime}
-          size={80}
-          strokeWidth={7}
-          colors={["#1E293B", "#F7B801", "#A30000", "#A30000"]}
-          colorsTime={[7, 5, 2, 0]}
-          onComplete={onTimeout}
-        >
-          {children}
-        </CountdownCircleTimer>
-      </div>
+
+      {/* Timer container with fixed width */}
+      <div className="w-32">{children}</div>
+
+      <StartModal show={showModal} onClick={startExam} />
+      <EndModal show={endModal} onClick={() => setEndModal(false)} />
     </div>
   );
 };

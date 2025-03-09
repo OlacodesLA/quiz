@@ -7,6 +7,7 @@ import getUser from "@/lib/get-user";
 import { redirect } from "next/navigation";
 import { getUserById } from "@/services/profileServices";
 import { Suspense } from "react";
+import PaymentCard from "./components/card";
 
 export default async function Home() {
   const user = await getUser();
@@ -28,7 +29,7 @@ export default async function Home() {
         <Navbar />
         <Banner />
         <Suspense fallback="">
-          <InitiatePayment user={me} />
+          <PaymentCard user={me} />
         </Suspense>
       </div>
     </WithSidebar>

@@ -4,14 +4,19 @@ import { SidebarContent, CustomHeader } from "@/components/navigation/sidebar";
 import Banner from "@/components/banner";
 import { MainNav } from "@/components/main-nav";
 import Exam from "./components/exam";
-import { getFirstPublicDocument } from "@/services/profileServices";
+import {
+  getFirstPublicDocument,
+  getUserById,
+} from "@/services/profileServices";
 import getUser from "@/lib/get-user";
 
 export default async function Exams({ params }: { params: { exam: string } }) {
   // const { userId } = useAuth();
 
   // console.log(userId);
-  const { uid }: any = await getUser();
+  const user: any = await getUser();
+
+  const me = (await getUserById(user.uid)) || {};
 
   const questions = await getFirstPublicDocument("questions", params.exam);
   if (!questions) {
@@ -30,7 +35,8 @@ export default async function Exams({ params }: { params: { exam: string } }) {
         <Exam
           questions={questions?.questions}
           name={questions?.name}
-          userId={uid}
+          userId={user?.uid}
+          user={me}
           code={params.exam}
         />
       </div>

@@ -9,11 +9,12 @@ import { Heading } from "./ui/heading";
 export const MainNav = () => {
   const pathname = usePathname();
 
-  const name = Links.find((item) => pathname === item.href) || {
-    href: "Error",
-    name: "Error",
-    description: "Error",
+  const name = Links.find((item) => pathname.includes(item.href)) || {
+    href: "/dashboard",
+    name: "Dashboard",
+    description: "Dashboard",
   };
+
   return (
     <nav
       className={cn("flex  items-center space-x-4 lg:space-x-6 md:px-0 px-6")}

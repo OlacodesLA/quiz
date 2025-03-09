@@ -1,150 +1,134 @@
 "use client";
-import React from "react";
+
+import type React from "react";
 import { makePayment } from "@/axios/endpoints/payment.endpoint";
-import { Button } from "@/components/ui/button";
-import axios from "axios";
-import Pricing from "./pricing";
-import { userAgent } from "next/server";
 import toast from "react-hot-toast";
 
-type Props = {};
-
 type PaymentCardProps = {
-  levelName: string;
-  fees: Record<string, number>;
   user: any;
 };
 
 function convertToTitleCase(str: string) {
-  return (
-    str
-      .replace(/\b\w/g, function (char: string) {
-        return char.toUpperCase();
-      })
-      // .replace(/I{2}/g, "II")
-      // .replace(/I\b/g, "I")
-      // .replace(/I$/, "")
-      .replace(/Level/g, " ")
-  );
+  return str
+    .replace(/\b\w/g, (char: string) => char.toUpperCase())
+    .replace(/Level/g, " ")
+    .trim();
 }
 
 function removeSpaces(str: string) {
   return str?.replace(/\s+/g, "");
 }
 
-const InitiatePayment = ({ user }: any) => {
-  console.log("Payment User", user);
+const PaymentCard: React.FC<PaymentCardProps> = ({ user }) => {
+  const currentLevel = user?.level;
+  const acceptanceFee = 5000;
+
+  const feeStructure: Record<string, Record<string, number>> = {
+    foundationI: {
+      studyPackFee: 4000,
+      examinationFee: 12000,
+    },
+    foundationII: {
+      exemptionFee: 10000,
+      studyPackFee: 4000,
+      examinationFee: 14000,
+    },
+    intermediateI: {
+      exemptionFee: 12500,
+      studyPackFee: 4500,
+      examinationFee: 16000,
+    },
+    intermediateII: {
+      exemptionFee: 15000,
+      studyPackFee: 4500,
+      examinationFee: 18000,
+    },
+    finalI: {
+      exemptionFee: 20000,
+      studyPackFee: 5000,
+      examinationFee: 20000,
+    },
+    finalII: {
+      studyPackFee: 5000,
+      examinationFee: 25000,
+    },
+  };
+
+  const currentLevelFees = feeStructure[removeSpaces(currentLevel)] || {};
+  const totalAmount = Object.values(currentLevelFees).reduce(
+    (sum, fee) => sum + fee,
+    0
+  );
+
+  const pay = async (isAcceptanceFee: boolean) => {
+    const amount = isAcceptanceFee ? acceptanceFee : totalAmount;
+    const levelName = isAcceptanceFee
+      ? "AcceptanceFee"
+      : convertToTitleCase(currentLevel);
+
+    try {
+      const response = await makePayment({
+        userId: user?.userId,
+        name: user?.name ?? `${user?.firstName} ${user?.lastName}`,
+        amount: Math.floor(amount / 10),
+        email: user?.email,
+        levelName,
+      });
+
+      window.open(response?.data?.data?.link, "_blank");
+    } catch (error) {
+      toast.error("Failed to initiate payment. Please try again.");
+    }
+  };
+
+  const formatAmount = (amount: number) => {
+    return new Intl.NumberFormat("en-NG", {
+      style: "currency",
+      currency: "NGN",
+    }).format(amount);
+  };
+
   return (
-    <div className="px-6">
-      <div className="max-w-screen-xl  py-8  sm:py-12 lg:py-16">
-        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 sm:items-stretch md:grid-cols-3 md:gap-8">
-          {Object.entries(feeStructure).map(([levelName, fees]) => (
-            <div
-              key={levelName}
-              className="divide-y divide-gray-200 rounded-2xl border border-gray-200 shadow-sm"
-            >
-              <PaymentCard levelName={levelName} fees={fees} user={user} />
-            </div>
-          ))}
+    <div className="max-w-md mx-auto p-6 bg-white rounded-lg shadow-md">
+      <h2 className="text-2xl font-bold mb-4">Payment Details</h2>
+
+      {!user?.acceptanceFee && (
+        <div className="mb-6">
+          <h3 className="text-xl font-semibold mb-2">Acceptance Fee</h3>
+          <p className="text-lg mb-2">{formatAmount(acceptanceFee)}</p>
+          <button
+            className="w-full bg-blue-500 text-white py-2 px-4 rounded hover:bg-blue-600 transition-colors"
+            onClick={() => pay(true)}
+          >
+            Pay Acceptance Fee
+          </button>
         </div>
+      )}
+
+      <div>
+        <h3 className="text-xl font-semibold mb-2">
+          Current Level: {convertToTitleCase(currentLevel)}
+        </h3>
+        <ul className="mb-4">
+          {Object.entries(currentLevelFees).map(([feeName, amount]) => (
+            <li key={feeName} className="flex justify-between mb-2">
+              <span>{feeName}:</span>
+              <span>{formatAmount(amount)}</span>
+            </li>
+          ))}
+        </ul>
+        <p className="text-lg font-bold mb-2">
+          Total: {formatAmount(totalAmount)}
+        </p>
+        <button
+          className="w-full bg-green-500 text-white py-2 px-4 rounded hover:bg-green-600 transition-colors"
+          onClick={() => pay(false)}
+        >
+          Pay Level Fees
+        </button>
       </div>
     </div>
   );
 };
 
-export default InitiatePayment;
-
-// Assuming this is a separate component named PaymentCard
-
-const PaymentCard: React.FC<PaymentCardProps> = ({ levelName, fees, user }) => {
-  const pay = async () => {
-    // Summing up all fees for the payment
-    const convertedLevel = convertToTitleCase(levelName);
-    console.log("USER oo", user);
-    const totalAmount = Object.values(fees).reduce((sum, fee) => sum + fee, 0);
-
-    console.log(Number(totalAmount / 1000));
-
-    console.log(convertedLevel, user?.level, levelName);
-    if (
-      convertedLevel === removeSpaces(user?.level) ||
-      convertedLevel === "AcceptanceFee"
-    ) {
-      const response = (await makePayment({
-        userId: user?.userId,
-        name: user?.name ?? `${user?.firstName} ${user?.lastName}`,
-        amount: Math.floor(totalAmount / 10),
-        email: user?.email,
-        levelName: convertedLevel,
-      })) as any;
-      console.log(
-        `Payment initiated for ${levelName}`,
-        response?.data?.data?.link
-      );
-      window.open(response?.data?.data?.link, "_blank");
-    } else {
-      // console.log(convertedLevel, user?.level, levelName);
-      toast.error("Please choose your currenly level");
-    }
-  };
-
-  const price = Object.values(fees).reduce((sum, fee) => sum + fee, 0);
-
-  const hasPaid = user?.[levelName] === true;
-  const isCurrentLevel =
-    convertToTitleCase(levelName) === removeSpaces(user?.level);
-
-  console.log(
-    convertToTitleCase(levelName),
-    removeSpaces(user?.level),
-    isCurrentLevel,
-    hasPaid
-  );
-
-  return (
-    <div>
-      <Pricing
-        level={levelName}
-        price={price}
-        pay={pay}
-        fees={fees}
-        isCurrentLevel={isCurrentLevel}
-        hasPaid={hasPaid}
-      />
-    </div>
-  );
-};
-
-const feeStructure = {
-  acceptanceFee: {
-    acceptanceFee: 5000,
-  },
-  foundationI: {
-    studyPackFee: 4000,
-    examinationFee: 12000,
-  },
-  foundationII: {
-    exemptionFee: 10000,
-    studyPackFee: 4000,
-    examinationFee: 14000,
-  },
-  intermediateI: {
-    exemptionFee: 12500,
-    studyPackFee: 4500,
-    examinationFee: 16000,
-  },
-  intermediateII: {
-    exemptionFee: 15000,
-    studyPackFee: 4500,
-    examinationFee: 18000,
-  },
-  finalI: {
-    exemptionFee: 20000,
-    studyPackFee: 5000,
-    examinationFee: 20000,
-  },
-  finalII: {
-    studyPackFee: 5000,
-    examinationFee: 25000,
-  },
-};
+export default PaymentCard;
