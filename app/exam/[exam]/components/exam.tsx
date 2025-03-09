@@ -37,7 +37,7 @@ const Exam = ({ questions, code, userId, name, user }: Props) => {
 
   const startExam = async () => {
     const startTime = Math.floor(Date.now() / 1000);
-    const examDuration = 10000; // 1 hour in seconds
+    const examDuration = 1000; // 1 hour in seconds
     await setDoc(
       examDocRef,
       {
@@ -121,7 +121,9 @@ const Exam = ({ questions, code, userId, name, user }: Props) => {
 
         return {
           id: index + 1,
-          text: question.text.replace(/\\t/g, ""),
+          text: question.text
+            ? question.text.replace(/\\t/g, "")
+            : question.text,
           options: optionsArray,
           correctAnswer: actualCorrectAnswer,
           selectedAnswer: selectedAnswers[index]?.selectedAnswer || null,
